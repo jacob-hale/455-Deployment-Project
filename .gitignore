@@ -1,0 +1,72 @@
+# =========================================
+# Node.js & Next.js (Frontend)
+# =========================================
+node_modules/
+.pnp
+.pnp.js
+.npm/
+
+# Next.js build output
+.next/
+out/
+build/
+
+# Vercel specific
+.vercel/
+
+# =========================================
+# Python & FastAPI (Backend)
+# =========================================
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environments
+venv/
+env/
+.env_python/
+.venv/
+Scripts/
+
+# =========================================
+# Machine Learning & Data
+# =========================================
+# Ignore local databases (since you migrated to Supabase)
+*.db
+*.sqlite
+*.sqlite3
+
+# Ignore large datasets used by the ML team
+*.csv
+*.tsv
+*.parquet
+
+# NOTE: If your late_delivery_model.pkl is small (< 50MB), you CAN commit it 
+# so Vercel can access it. If it is very large, uncomment the next line and use Git LFS.
+# *.pkl
+# *.joblib
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# =========================================
+# Environment Variables & Secrets
+# =========================================
+.env
+.env*.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# =========================================
+# OS & Editor Files
+# =========================================
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
