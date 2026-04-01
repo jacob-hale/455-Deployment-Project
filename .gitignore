@@ -31,6 +31,9 @@ Scripts/
 # =========================================
 # Machine Learning & Data
 # =========================================
+# Generated Supabase INSERT chunks (from scripts/prepare_supabase_inserts.py)
+scripts/supabase_chunks/
+
 # Ignore local databases (since you migrated to Supabase)
 *.db
 *.sqlite
