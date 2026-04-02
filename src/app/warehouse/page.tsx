@@ -94,51 +94,98 @@ export default function WarehouseDashboardPage() {
     }
   };
 
+  const flaggedCount = queue.filter((q) => q.is_fraud_pred === 1).length;
+  const verifiedCount = queue.filter((q) => q.is_fraud_verified !== null).length;
+
   return (
-    <main className="mx-auto max-w-7xl px-6 py-8">
-      <div className="flex items-center justify-between">
+    <main className="mx-auto max-w-7xl px-6 py-10">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900">
             Admin Dashboard
           </h1>
-          <p className="mt-1 text-sm text-slate-600">
-            Fraud detection priority queue &mdash; review and verify predictions.
+          <p className="mt-1 text-sm text-slate-500">
+            Fraud detection priority queue &mdash; review and verify
+            predictions.
           </p>
         </div>
         <button
           onClick={handleRunScoring}
           disabled={scoring}
-          className="rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:bg-indigo-300"
+          className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:bg-indigo-300"
         >
+          {scoring && (
+            <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+          )}
           {scoring ? "Scoring..." : "Run Scoring"}
         </button>
       </div>
 
+      {/* Stats row */}
+      <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+          <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
+            In Queue
+          </p>
+          <p className="mt-1 text-2xl font-bold text-slate-900">
+            {queue.length}
+          </p>
+        </div>
+        <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+          <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
+            Flagged as Fraud
+          </p>
+          <p className="mt-1 text-2xl font-bold text-rose-600">
+            {flaggedCount}
+          </p>
+        </div>
+        <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+          <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
+            Verified
+          </p>
+          <p className="mt-1 text-2xl font-bold text-emerald-600">
+            {verifiedCount}
+            <span className="ml-1 text-sm font-normal text-slate-400">
+              / {queue.length}
+            </span>
+          </p>
+        </div>
+      </div>
+
       {scoreResult && (
-        <div className="mt-4 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
+        <div className="mt-4 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
           Scored <strong>{scoreResult.records_scored}</strong> orders &mdash;{" "}
           <strong>{scoreResult.high_risk_detected}</strong> flagged as high risk
           {scoreResult.execution_time_ms != null && (
-            <> ({scoreResult.execution_time_ms}ms)</>
+            <span className="text-emerald-600">
+              {" "}
+              ({(scoreResult.execution_time_ms / 1000).toFixed(1)}s)
+            </span>
           )}
         </div>
       )}
 
       {error && (
-        <p className="mt-4 rounded-md bg-rose-50 px-3 py-2 text-sm text-rose-700">
+        <div className="mt-4 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
           {error}
-        </p>
+        </div>
       )}
 
       {lastUpdated && (
-        <p className="mt-4 text-xs text-slate-500">
-          Last scored: {new Date(lastUpdated).toLocaleString()}
+        <p className="mt-4 text-xs text-slate-400">
+          Last scored:{" "}
+          <time className="font-medium text-slate-500">
+            {new Date(lastUpdated).toLocaleString()}
+          </time>
         </p>
       )}
 
       <section className="mt-6">
         {loading ? (
-          <p className="text-sm text-slate-500">Loading queue...</p>
+          <div className="flex items-center gap-2 py-12 text-sm text-slate-500">
+            <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-indigo-300 border-t-indigo-600" />
+            Loading queue...
+          </div>
         ) : (
           <PriorityQueue items={queue} onVerify={handleVerify} />
         )}

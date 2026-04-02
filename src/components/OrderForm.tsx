@@ -94,30 +94,34 @@ export default function OrderForm({ customerId, onOrderPlaced }: OrderFormProps)
   return (
     <form
       onSubmit={handleSubmit}
-      className="mt-4 space-y-4 rounded-lg border border-slate-200 bg-white p-5 shadow-sm"
+      className="mt-4 space-y-5 rounded-xl border border-slate-200 bg-white p-6 shadow-sm"
     >
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <label className="block">
-          <span className="text-xs font-medium text-slate-600">Payment</span>
+          <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+            Payment
+          </span>
           <select
             value={paymentMethod}
             onChange={(e) => setPaymentMethod(e.target.value)}
-            className="mt-1 block w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
+            className="mt-1.5 block w-full rounded-lg border border-slate-300 bg-slate-50 px-3 py-2.5 text-sm transition focus:border-indigo-400 focus:bg-white focus:ring-2 focus:ring-indigo-500/20 focus:outline-none"
           >
             {PAYMENT_METHODS.map((m) => (
               <option key={m} value={m}>
-                {m}
+                {m.replace("_", " ")}
               </option>
             ))}
           </select>
         </label>
 
         <label className="block">
-          <span className="text-xs font-medium text-slate-600">Device</span>
+          <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+            Device
+          </span>
           <select
             value={deviceType}
             onChange={(e) => setDeviceType(e.target.value)}
-            className="mt-1 block w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
+            className="mt-1.5 block w-full rounded-lg border border-slate-300 bg-slate-50 px-3 py-2.5 text-sm transition focus:border-indigo-400 focus:bg-white focus:ring-2 focus:ring-indigo-500/20 focus:outline-none"
           >
             {DEVICE_TYPES.map((d) => (
               <option key={d} value={d}>
@@ -128,20 +132,22 @@ export default function OrderForm({ customerId, onOrderPlaced }: OrderFormProps)
         </label>
 
         <label className="block">
-          <span className="text-xs font-medium text-slate-600">
+          <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">
             Shipping Fee
           </span>
           <input
             type="text"
             value={shippingFee}
             onChange={(e) => setShippingFee(e.target.value)}
-            className="mt-1 block w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
+            className="mt-1.5 block w-full rounded-lg border border-slate-300 bg-slate-50 px-3 py-2.5 text-sm transition placeholder:text-slate-400 focus:border-indigo-400 focus:bg-white focus:ring-2 focus:ring-indigo-500/20 focus:outline-none"
           />
         </label>
       </div>
 
       <div>
-        <p className="text-xs font-medium text-slate-600">Items</p>
+        <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+          Line Items
+        </p>
         <div className="mt-2 space-y-2">
           {items.map((item, idx) => (
             <div key={idx} className="flex items-center gap-2">
@@ -150,27 +156,27 @@ export default function OrderForm({ customerId, onOrderPlaced }: OrderFormProps)
                 placeholder="Product ID"
                 value={item.product_id}
                 onChange={(e) => updateItem(idx, "product_id", e.target.value)}
-                className="w-28 rounded-md border border-slate-300 px-3 py-1.5 text-sm"
+                className="w-28 rounded-lg border border-slate-300 bg-slate-50 px-3 py-2 text-sm transition placeholder:text-slate-400 focus:border-indigo-400 focus:bg-white focus:ring-2 focus:ring-indigo-500/20 focus:outline-none"
               />
               <input
                 type="text"
                 placeholder="Qty"
                 value={item.quantity}
                 onChange={(e) => updateItem(idx, "quantity", e.target.value)}
-                className="w-16 rounded-md border border-slate-300 px-3 py-1.5 text-sm"
+                className="w-16 rounded-lg border border-slate-300 bg-slate-50 px-3 py-2 text-sm transition placeholder:text-slate-400 focus:border-indigo-400 focus:bg-white focus:ring-2 focus:ring-indigo-500/20 focus:outline-none"
               />
               <input
                 type="text"
                 placeholder="Unit Price"
                 value={item.unit_price}
                 onChange={(e) => updateItem(idx, "unit_price", e.target.value)}
-                className="w-28 rounded-md border border-slate-300 px-3 py-1.5 text-sm"
+                className="w-28 rounded-lg border border-slate-300 bg-slate-50 px-3 py-2 text-sm transition placeholder:text-slate-400 focus:border-indigo-400 focus:bg-white focus:ring-2 focus:ring-indigo-500/20 focus:outline-none"
               />
               {items.length > 1 && (
                 <button
                   type="button"
                   onClick={() => removeItem(idx)}
-                  className="text-xs text-rose-600 hover:text-rose-800"
+                  className="rounded-lg px-2 py-1.5 text-xs font-medium text-rose-500 transition hover:bg-rose-50 hover:text-rose-700"
                 >
                   Remove
                 </button>
@@ -181,27 +187,27 @@ export default function OrderForm({ customerId, onOrderPlaced }: OrderFormProps)
         <button
           type="button"
           onClick={addItem}
-          className="mt-2 text-xs font-medium text-indigo-600 hover:text-indigo-800"
+          className="mt-2 text-xs font-semibold text-indigo-600 transition hover:text-indigo-800"
         >
           + Add item
         </button>
       </div>
 
       {error && (
-        <p className="rounded-md bg-rose-50 px-3 py-2 text-sm text-rose-700">
+        <div className="rounded-lg border border-rose-200 bg-rose-50 px-3 py-2.5 text-sm text-rose-700">
           {error}
-        </p>
+        </div>
       )}
       {success && (
-        <p className="rounded-md bg-emerald-50 px-3 py-2 text-sm text-emerald-700">
+        <div className="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2.5 text-sm text-emerald-700">
           {success}
-        </p>
+        </div>
       )}
 
       <button
         type="submit"
         disabled={submitting}
-        className="rounded-lg bg-indigo-600 px-5 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:cursor-not-allowed disabled:bg-indigo-300"
+        className="rounded-xl bg-indigo-600 px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:bg-indigo-300"
       >
         {submitting ? "Placing..." : "Place Order"}
       </button>

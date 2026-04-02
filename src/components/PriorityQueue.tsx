@@ -23,18 +23,18 @@ type PriorityQueueProps = {
 function riskBadge(prob: number) {
   if (prob >= 0.7)
     return (
-      <span className="inline-block rounded-full bg-rose-100 px-2 py-0.5 text-xs font-semibold text-rose-700">
+      <span className="inline-flex items-center rounded-full bg-rose-100 px-2.5 py-0.5 text-xs font-semibold text-rose-700 ring-1 ring-rose-200">
         High
       </span>
     );
   if (prob >= 0.3)
     return (
-      <span className="inline-block rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-700">
+      <span className="inline-flex items-center rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-semibold text-amber-700 ring-1 ring-amber-200">
         Medium
       </span>
     );
   return (
-    <span className="inline-block rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-semibold text-emerald-700">
+    <span className="inline-flex items-center rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-semibold text-emerald-700 ring-1 ring-emerald-200">
       Low
     </span>
   );
@@ -44,12 +44,12 @@ function verifiedBadge(verified: number | null) {
   if (verified === null) return null;
   if (verified === 1)
     return (
-      <span className="inline-block rounded-full bg-rose-100 px-2 py-0.5 text-xs font-medium text-rose-700">
+      <span className="inline-flex items-center rounded-full bg-rose-100 px-2.5 py-0.5 text-xs font-semibold text-rose-700">
         Confirmed Fraud
       </span>
     );
   return (
-    <span className="inline-block rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-700">
+    <span className="inline-flex items-center rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-semibold text-emerald-700">
       Confirmed OK
     </span>
   );
@@ -58,47 +58,70 @@ function verifiedBadge(verified: number | null) {
 export default function PriorityQueue({ items, onVerify }: PriorityQueueProps) {
   if (items.length === 0) {
     return (
-      <div className="rounded-lg border border-slate-200 bg-white p-6 text-center text-sm text-slate-500 shadow-sm">
-        No predictions yet. Click <strong>Run Scoring</strong> to score
-        orders.
+      <div className="rounded-xl border border-dashed border-slate-300 bg-white p-10 text-center">
+        <p className="text-sm text-slate-400">
+          No predictions yet. Click{" "}
+          <strong className="text-slate-600">Run Scoring</strong> to score
+          orders.
+        </p>
       </div>
     );
   }
 
   return (
-    <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white shadow-sm">
+    <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm">
       <table className="w-full text-left text-sm">
-        <thead className="border-b border-slate-200 bg-slate-50 text-xs uppercase text-slate-500">
+        <thead className="border-b border-slate-100 bg-slate-50/80">
           <tr>
-            <th className="px-4 py-3">Order</th>
-            <th className="px-4 py-3">Customer</th>
-            <th className="px-4 py-3">Date</th>
-            <th className="px-4 py-3">Total</th>
-            <th className="px-4 py-3">Payment</th>
-            <th className="px-4 py-3">Fraud Prob</th>
-            <th className="px-4 py-3">Risk</th>
-            <th className="px-4 py-3">Prediction</th>
-            <th className="px-4 py-3">Status</th>
-            <th className="px-4 py-3">Verify</th>
+            {[
+              "Order",
+              "Customer",
+              "Date",
+              "Total",
+              "Payment",
+              "Fraud Prob",
+              "Risk",
+              "Prediction",
+              "Status",
+              "Verify",
+            ].map((h) => (
+              <th
+                key={h}
+                className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-500"
+              >
+                {h}
+              </th>
+            ))}
           </tr>
         </thead>
-        <tbody className="divide-y divide-slate-100">
+        <tbody className="divide-y divide-slate-50">
           {items.map((item) => (
-            <tr key={item.order_id} className="hover:bg-slate-50">
-              <td className="px-4 py-3 font-medium">{item.order_id}</td>
-              <td className="px-4 py-3">{item.customer_name}</td>
-              <td className="px-4 py-3 text-slate-600">
+            <tr
+              key={item.order_id}
+              className="transition-colors hover:bg-slate-50/60"
+            >
+              <td className="px-4 py-3 font-semibold text-slate-900">
+                #{item.order_id}
+              </td>
+              <td className="px-4 py-3 text-slate-700">{item.customer_name}</td>
+              <td className="px-4 py-3 text-slate-500">
                 {new Date(item.order_datetime).toLocaleDateString()}
               </td>
-              <td className="px-4 py-3">${item.order_total.toFixed(2)}</td>
-              <td className="px-4 py-3 capitalize">{item.payment_method}</td>
-              <td className="px-4 py-3 font-mono">
-                {(item.proba_fraud * 100).toFixed(1)}%
+              <td className="px-4 py-3 font-medium">
+                ${item.order_total.toFixed(2)}
+              </td>
+              <td className="px-4 py-3 capitalize text-slate-600">
+                {item.payment_method}
+              </td>
+              <td className="px-4 py-3">
+                <span className="font-mono text-xs font-semibold">
+                  {(item.proba_fraud * 100).toFixed(1)}%
+                </span>
               </td>
               <td className="px-4 py-3">{riskBadge(item.proba_fraud)}</td>
               <td className="px-4 py-3">
                 <span
-                  className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${
+                  className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${
                     item.is_fraud_pred === 1
                       ? "bg-rose-100 text-rose-700"
                       : "bg-emerald-100 text-emerald-700"
@@ -112,16 +135,16 @@ export default function PriorityQueue({ items, onVerify }: PriorityQueueProps) {
               </td>
               <td className="px-4 py-3">
                 {item.is_fraud_verified === null ? (
-                  <div className="flex gap-1">
+                  <div className="flex gap-1.5">
                     <button
                       onClick={() => onVerify(item.order_id, 1)}
-                      className="rounded bg-rose-600 px-2 py-1 text-xs font-medium text-white hover:bg-rose-700"
+                      className="rounded-lg bg-rose-600 px-2.5 py-1.5 text-xs font-semibold text-white transition hover:bg-rose-700"
                     >
                       Fraud
                     </button>
                     <button
                       onClick={() => onVerify(item.order_id, 0)}
-                      className="rounded bg-emerald-600 px-2 py-1 text-xs font-medium text-white hover:bg-emerald-700"
+                      className="rounded-lg bg-emerald-600 px-2.5 py-1.5 text-xs font-semibold text-white transition hover:bg-emerald-700"
                     >
                       OK
                     </button>

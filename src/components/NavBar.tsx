@@ -13,11 +13,18 @@ export default function NavBar() {
   const pathname = usePathname();
 
   return (
-    <nav className="border-b border-slate-200 bg-white">
-      <div className="mx-auto flex max-w-7xl items-center gap-8 px-6 py-3">
-        <Link href="/" className="text-lg font-bold tracking-tight text-indigo-600">
+    <nav className="sticky top-0 z-40 border-b border-slate-200/80 bg-white/80 backdrop-blur-lg">
+      <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-3">
+        <Link
+          href="/"
+          className="flex items-center gap-2 text-lg font-extrabold tracking-tight text-indigo-600"
+        >
+          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-indigo-600 text-xs font-bold text-white">
+            S
+          </span>
           ShopIQ
         </Link>
+
         <div className="flex gap-1">
           {NAV_ITEMS.map(({ href, label }) => {
             const active = pathname === href;
@@ -25,10 +32,10 @@ export default function NavBar() {
               <Link
                 key={href}
                 href={href}
-                className={`rounded-md px-3 py-1.5 text-sm font-medium transition ${
+                className={`rounded-lg px-3.5 py-2 text-sm font-medium transition-colors ${
                   active
                     ? "bg-indigo-50 text-indigo-700"
-                    : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+                    : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"
                 }`}
               >
                 {label}

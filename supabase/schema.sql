@@ -149,10 +149,11 @@ CREATE TABLE IF NOT EXISTS ml_models (
 
 -- -----------------------------------------------------------------------------
 -- POST-MIGRATION: run after all INSERT chunks have loaded (fixes IDENTITY nextval)
+-- Without these, auto-generated IDs will collide with bulk-loaded rows.
 -- -----------------------------------------------------------------------------
--- SELECT setval(pg_get_serial_sequence('customers', 'customer_id'), COALESCE((SELECT MAX(customer_id) FROM customers), 1));
--- SELECT setval(pg_get_serial_sequence('products', 'product_id'), COALESCE((SELECT MAX(product_id) FROM products), 1));
--- SELECT setval(pg_get_serial_sequence('orders', 'order_id'), COALESCE((SELECT MAX(order_id) FROM orders), 1));
--- SELECT setval(pg_get_serial_sequence('order_items', 'order_item_id'), COALESCE((SELECT MAX(order_item_id) FROM order_items), 1));
--- SELECT setval(pg_get_serial_sequence('shipments', 'shipment_id'), COALESCE((SELECT MAX(shipment_id) FROM shipments), 1));
--- SELECT setval(pg_get_serial_sequence('product_reviews', 'review_id'), COALESCE((SELECT MAX(review_id) FROM product_reviews), 1));
+SELECT setval(pg_get_serial_sequence('customers', 'customer_id'), COALESCE((SELECT MAX(customer_id) FROM customers), 1));
+SELECT setval(pg_get_serial_sequence('products', 'product_id'), COALESCE((SELECT MAX(product_id) FROM products), 1));
+SELECT setval(pg_get_serial_sequence('orders', 'order_id'), COALESCE((SELECT MAX(order_id) FROM orders), 1));
+SELECT setval(pg_get_serial_sequence('order_items', 'order_item_id'), COALESCE((SELECT MAX(order_item_id) FROM order_items), 1));
+SELECT setval(pg_get_serial_sequence('shipments', 'shipment_id'), COALESCE((SELECT MAX(shipment_id) FROM shipments), 1));
+SELECT setval(pg_get_serial_sequence('product_reviews', 'review_id'), COALESCE((SELECT MAX(review_id) FROM product_reviews), 1));

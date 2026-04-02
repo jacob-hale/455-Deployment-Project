@@ -10,7 +10,7 @@ type CustomerProfile = {
   loyalty_tier: string;
 };
 
-const QUICK_SELECT_IDS = [1042, 1001, 2025, 3099];
+const QUICK_SELECT_IDS = [1, 23, 55, 87];
 
 export default function SelectCustomerPage() {
   const [customerIdInput, setCustomerIdInput] = useState<string>("");
@@ -33,7 +33,7 @@ export default function SelectCustomerPage() {
     try {
       const response = await fetch(`/api/customers/${customerId}`, {
         method: "GET",
-        headers: { "Content-Type": "application/json" }
+        headers: { "Content-Type": "application/json" },
       });
 
       if (!response.ok) {
@@ -65,65 +65,74 @@ export default function SelectCustomerPage() {
   };
 
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-3xl flex-col justify-center px-6 py-12">
-      <section className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
-        <h1 className="text-3xl font-semibold tracking-tight text-slate-900">
-          Select Customer
-        </h1>
-        <p className="mt-2 text-sm text-slate-600">
-          Enter a customer ID to log in or choose a quick option.
-        </p>
+    <main className="mx-auto flex min-h-[calc(100vh-57px)] w-full max-w-xl flex-col items-center justify-center px-6 py-12">
+      <section className="w-full rounded-2xl border border-slate-200 bg-white p-8 shadow-lg shadow-slate-200/60">
+        <div className="text-center">
+          <h1 className="text-3xl font-bold tracking-tight text-slate-900">
+            Welcome to ShopIQ
+          </h1>
+          <p className="mt-2 text-sm text-slate-500">
+            Enter a customer ID to get started, or pick one below.
+          </p>
+        </div>
 
-        <form onSubmit={handleSubmit} className="mt-6 flex gap-3">
+        <form onSubmit={handleSubmit} className="mt-8 flex gap-3">
           <input
             type="text"
             inputMode="numeric"
-            placeholder="e.g. 1042"
+            placeholder="e.g. 42"
             value={customerIdInput}
             onChange={(event) => setCustomerIdInput(event.target.value)}
-            className="flex-1 rounded-lg border border-slate-300 px-4 py-2.5 text-sm outline-none ring-indigo-500 transition focus:ring-2"
+            className="flex-1 rounded-xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm outline-none transition placeholder:text-slate-400 focus:border-indigo-400 focus:bg-white focus:ring-2 focus:ring-indigo-500/20"
           />
           <button
             type="submit"
             disabled={isLoading}
-            className="rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:bg-indigo-300"
+            className="rounded-xl bg-indigo-600 px-6 py-3 text-sm font-semibold text-white shadow-md shadow-indigo-200 transition hover:bg-indigo-700 hover:shadow-lg hover:shadow-indigo-200 disabled:cursor-not-allowed disabled:bg-indigo-300 disabled:shadow-none"
           >
             {isLoading ? "Loading..." : "Continue"}
           </button>
         </form>
 
-        <div className="mt-4 flex flex-wrap gap-2">
+        <div className="mt-4 flex flex-wrap justify-center gap-2">
+          <span className="mr-1 self-center text-xs text-slate-400">
+            Quick pick:
+          </span>
           {QUICK_SELECT_IDS.map((id) => (
             <button
               key={id}
               type="button"
               disabled={isLoading}
               onClick={() => void loadCustomer(id)}
-              className="rounded-full border border-slate-300 px-3 py-1.5 text-xs font-medium text-slate-700 transition hover:border-indigo-400 hover:text-indigo-700 disabled:cursor-not-allowed disabled:opacity-50"
+              className="rounded-full border border-slate-200 bg-slate-50 px-3.5 py-1.5 text-xs font-medium text-slate-600 transition hover:border-indigo-300 hover:bg-indigo-50 hover:text-indigo-700 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {id}
+              #{id}
             </button>
           ))}
         </div>
 
         {error ? (
-          <p className="mt-5 rounded-md bg-rose-50 px-3 py-2 text-sm text-rose-700">
+          <div className="mt-6 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
             {error}
-          </p>
+          </div>
         ) : null}
 
         {customer ? (
-          <div className="mt-6 rounded-xl border border-emerald-200 bg-emerald-50 p-4">
-            <p className="text-sm text-emerald-700">Welcome back,</p>
-            <p className="text-xl font-semibold text-emerald-900">
+          <div className="mt-6 rounded-xl border border-emerald-200 bg-gradient-to-br from-emerald-50 to-teal-50 p-5">
+            <p className="text-xs font-medium uppercase tracking-wide text-emerald-600">
+              Welcome back
+            </p>
+            <p className="mt-1 text-xl font-bold text-emerald-900">
               {customer.full_name}
             </p>
-            <p className="mt-1 text-sm text-emerald-800">
-              Loyalty Tier:{" "}
-              <span className="font-semibold capitalize">
+            <div className="mt-3 flex gap-3">
+              <span className="inline-flex items-center rounded-full bg-white/70 px-3 py-1 text-xs font-medium text-emerald-700 ring-1 ring-emerald-200">
+                {customer.customer_segment}
+              </span>
+              <span className="inline-flex items-center rounded-full bg-white/70 px-3 py-1 text-xs font-medium capitalize text-emerald-700 ring-1 ring-emerald-200">
                 {customer.loyalty_tier}
               </span>
-            </p>
+            </div>
           </div>
         ) : null}
       </section>
