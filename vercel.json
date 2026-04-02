@@ -4,5 +4,11 @@
       "source": "/api/(.*)",
       "destination": "/api/main.py"
     }
+  ],
+  "crons": [
+    {
+      "path": "/api/ml/retrain",
+      "schedule": "0 3 * * *"
+    }
   ]
 }
