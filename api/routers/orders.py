@@ -175,18 +175,21 @@ async def list_orders(
             )
         )
 
-    # Fetch predictions
-    preds_resp = (
-        supabase.table("payment_predictions")
-        .select("order_id, proba_fraud, is_fraud_pred, risk_band_1_100, is_fraud_verified")
-        .in_("order_id", order_ids)
-        .order("prediction_id", desc=True)
-        .execute()
-    )
+    # Fetch predictions (table may not exist yet if schema migration is incomplete)
     preds_map: dict[int, dict] = {}
-    for p in (preds_resp.data or []):
-        if p["order_id"] not in preds_map:
-            preds_map[p["order_id"]] = p
+    try:
+        preds_resp = (
+            supabase.table("payment_predictions")
+            .select("order_id, proba_fraud, is_fraud_pred, risk_band_1_100, is_fraud_verified")
+            .in_("order_id", order_ids)
+            .order("prediction_id", desc=True)
+            .execute()
+        )
+        for p in (preds_resp.data or []):
+            if p["order_id"] not in preds_map:
+                preds_map[p["order_id"]] = p
+    except Exception:
+        pass
 
     result: list[OrderOut] = []
     for o in orders:

@@ -67,13 +67,23 @@ async def get_fraud_queue(
     supabase: Client = Depends(get_supabase_client),
 ) -> QueueResponse:
     """Return orders ranked by fraud probability (highest first)."""
-    resp = (
-        supabase.table("payment_predictions")
-        .select("order_id, proba_fraud, risk_band_1_100, is_fraud_pred, is_fraud_verified, scored_at_utc, model_version")
-        .order("proba_fraud", desc=True)
-        .limit(limit)
-        .execute()
-    )
+    try:
+        resp = (
+            supabase.table("payment_predictions")
+            .select("order_id, proba_fraud, risk_band_1_100, is_fraud_pred, is_fraud_verified, scored_at_utc, model_version")
+            .order("proba_fraud", desc=True)
+            .limit(limit)
+            .execute()
+        )
+    except Exception as exc:
+        raise HTTPException(
+            status_code=503,
+            detail=(
+                f"payment_predictions table is not available ({exc}). "
+                "Run the CREATE TABLE statements from supabase/schema.sql "
+                "(sections 7-8) in your Supabase SQL editor."
+            ),
+        )
     preds = resp.data or []
 
     if not preds:
@@ -81,7 +91,6 @@ async def get_fraud_queue(
 
     order_ids = [p["order_id"] for p in preds]
 
-    # Fetch order details
     orders_resp = (
         supabase.table("orders")
         .select("order_id, customer_id, order_datetime, order_total, payment_method, device_type")
@@ -90,7 +99,6 @@ async def get_fraud_queue(
     )
     orders_map = {o["order_id"]: o for o in (orders_resp.data or [])}
 
-    # Fetch customer names
     customer_ids = list({o["customer_id"] for o in orders_map.values()})
     cust_resp = (
         supabase.table("customers")
@@ -132,7 +140,19 @@ async def trigger_scoring(
 ) -> ScoreResponse:
     """Run ML inference on all unscored orders."""
     start = time.time()
-    result = score_unscored_orders(supabase)
+    try:
+        result = score_unscored_orders(supabase)
+    except RuntimeError as exc:
+        raise HTTPException(status_code=503, detail=str(exc))
+    except Exception as exc:
+        raise HTTPException(
+            status_code=503,
+            detail=(
+                f"Scoring failed ({exc}). Ensure the payment_predictions and "
+                "ml_models tables exist (see supabase/schema.sql sections 7-8) "
+                "and that at least one trained model has been stored."
+            ),
+        )
     elapsed_ms = int((time.time() - start) * 1000)
 
     return ScoreResponse(
