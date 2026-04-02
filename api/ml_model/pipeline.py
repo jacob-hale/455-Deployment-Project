@@ -97,9 +97,9 @@ def _safe_copy(df: pd.DataFrame) -> pd.DataFrame:
 
 def split_order_datetime(orders: pd.DataFrame) -> pd.DataFrame:
     df = _safe_copy(orders)
-    dt = pd.to_datetime(df["order_datetime"], errors="coerce", utc=False)
-    df["order_date"] = dt.dt.date.astype("string")
-    df["order_time"] = dt.dt.time.astype("string")
+    dt = pd.to_datetime(df["order_datetime"], errors="coerce", utc=True)
+    df["order_date"] = dt.dt.strftime("%Y-%m-%d")
+    df["order_time"] = dt.dt.strftime("%H:%M:%S")
     return df
 
 
