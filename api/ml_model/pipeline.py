@@ -55,7 +55,24 @@ def _supabase_select_all(client: Client, table: str) -> pd.DataFrame:
         if len(batch) < page_size:
             break
         offset += page_size
-    return pd.DataFrame(rows)
+    df = pd.DataFrame(rows)
+    _coerce_numpy_dtypes(df)
+    return df
+
+
+def _coerce_numpy_dtypes(df: pd.DataFrame) -> None:
+    """Convert nullable extension types to numpy-backed types in-place.
+
+    Pandas 2.x may infer ``Int64``, ``Float64``, ``boolean``, or
+    ``StringDtype`` when rows contain ``None``.  Sklearn expects
+    numpy-backed ``float64`` / ``object`` and chokes on ``pd.NA``.
+    """
+    for col in df.columns:
+        if pd.api.types.is_extension_array_dtype(df[col].dtype):
+            if pd.api.types.is_numeric_dtype(df[col]):
+                df[col] = df[col].astype(float)
+            else:
+                df[col] = df[col].astype(object)
 
 
 def fetch_tables_from_supabase(

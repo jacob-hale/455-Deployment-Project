@@ -114,8 +114,16 @@ def score_unscored_orders(client: Client) -> Dict[str, Any]:
     # Keep only unscored rows for prediction output
     unscored_order_ids = set(raw["orders"].loc[unscored_mask, "order_id"])
     mask = model_df["order_id"].isin(unscored_order_ids)
-    X_score = model_df.loc[mask, feature_cols]
+    X_score = model_df.loc[mask, feature_cols].copy()
     order_ids = model_df.loc[mask, "order_id"].astype(int).values
+
+    # Ensure numpy-backed dtypes so sklearn never sees pd.NA
+    for col in X_score.columns:
+        if pd.api.types.is_extension_array_dtype(X_score[col].dtype):
+            if pd.api.types.is_numeric_dtype(X_score[col]):
+                X_score[col] = X_score[col].astype(float)
+            else:
+                X_score[col] = X_score[col].astype(object)
 
     proba = pipeline.predict_proba(X_score)[:, 1]
     preds = (proba >= threshold).astype(int)
